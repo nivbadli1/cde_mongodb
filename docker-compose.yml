@@ -1,0 +1,56 @@
+# Single-node MongoDB replica set + the course dev environment.
+# Based on Appendix A.1 of docs/MongoDB_Lesson_Deck_Content.md.
+# A replica set (even with ONE member) is required for: the oplog,
+# change streams, multi-document transactions and the Kafka source connector.
+#
+#   docker compose up -d
+#   docker compose ps            # wait for mongo "healthy"
+#   docker exec -it mongo mongosh
+#
+# Image: mongo:8.0 (works the same with mongo:7.0 or mongo:9.0).
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: mongo
+    hostname: mongo
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    # The healthcheck doubles as the initializer:
+    #  - replica set already initiated -> rs.status() succeeds -> healthy
+    #  - otherwise -> rs.initiate() with host "mongo:27017" (the compose-network name)
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - >
+          try { rs.status().ok }
+          catch (e) { rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongo:27017'}]}).ok }
+      interval: 5s
+      timeout: 10s
+      start_period: 10s
+      retries: 30
+
+  dev_env:
+    image: ofrir119/developer_env:spark340_ssh
+    container_name: dev_env
+    ports:
+      - "22022:22"
+      - "8888:8888"
+      - "4040-4042:4040-4042"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/?directConnection=true
+    volumes:
+      # Jupyter in this image runs as user "developer" with /home/developer as its root,
+      # so the lab shows up as the "lab" folder in the Jupyter file browser.
+      - ./lab:/home/developer/lab
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
