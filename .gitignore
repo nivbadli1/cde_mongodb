@@ -10,3 +10,6 @@ __pycache__/
 # Local Docker volume data (the compose file uses a named volume; this covers bind-mount experiments)
 volumes/
 data/
+
+# Instructor-only material (facilitator guide, homework solutions) - never commit
+private/
