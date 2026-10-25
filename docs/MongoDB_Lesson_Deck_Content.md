@@ -14,7 +14,7 @@ Instructor source for the live deck (Claude Slides artifact, Naya template). **4
 |---|---|---|
 | MongoDB server | **8.0** (`mongo:8.0` image) | All code also valid on 7.0 and on 9.0 (GA since 29 Sep 2026 [S24]) |
 | mongosh | the one bundled in the `mongo:8.0` image | Run via `docker exec -it mongo mongosh` |
-| PyMongo | **4.18+** (4.18.3 in dev_env, Python 3.10; 4.19.0 needs Python 3.11+) | Latest on PyPI when this deck was written (24 Oct 2026) |
+| PyMongo | **4.18+** (4.18.3 in dev_env, Python 3.10) | 4.19.0 needs Python 3.11+, so the lab pins 4.18.3 |
 | Python | 3.10+ | Tested 3.13 |
 | MongoDB Kafka Connector | **3.1.2** (latest GitHub release) | Concept level only in this lesson [S17] |
 
@@ -1039,7 +1039,7 @@ This is the whole lesson as a checklist you can take to any team that says "the 
 - MongoDB = app's **source of truth**; analytics happens **downstream**
 - Flexible schema → **drift, mixed types, nested arrays** → you must detect them
 - Oplog → **Change Streams** → **Kafka source connector** → lakehouse
-- **Practice (60 min):** `docker compose up -d` → `python seed_orders.py` → follow the guide
+- **Practice (60 min):** `docker compose up -d` → open `lab/handout.md` → Setup
   *(update this line if the repo's final lab command differs, e.g. `lab/seed_orders.py` inside dev_env)*
 
 **Speaker notes**
@@ -1648,7 +1648,7 @@ Accessed 24 Oct 2026.
 | S23 | MongoDB — Kafka Connector vs Atlas Stream Processing | https://mongodb.com/docs/kafka-connector/master/kafka-connector-atlas-stream-processing-comparison |
 | S24 | MongoDB press release — MongoDB 9.0 GA (29 Sep 2026) | https://mongodb.com/company/newsroom/press-releases/mongodb-launches-mongodb-9-0-the-best-version-ever-built-and-atlas-infinite-for-ai-scale-demand |
 | S25 | MongoDB — 9.0 release notes | https://www.mongodb.com/docs/manual/release-notes/9.0/ |
-| S26 | PyPI — pymongo (4.19.0 installed 24 Oct 2026) | https://pypi.org/project/pymongo/ |
+| S26 | PyPI - pymongo (4.19.0 latest, needs Python 3.11+; 4.18.3 used in dev_env) | https://pypi.org/project/pymongo/ |
 | S27 | MongoDB blog — Kafka Connector 1.9 (pre/post images) | https://mongodb.com/blog/post/introducing-mongodb-connector-apache-kafka-version-1-9 |
 | S28 | OneUptime — Change Streams with the Kafka Connector (deletes excluded with full-document-only) | https://oneuptime.com/blog/post/2026-03-31-mongodb-change-streams-kafka-connector/view |
 
