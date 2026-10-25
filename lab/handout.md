@@ -378,7 +378,7 @@ Then, as a class: **what was hard today?** (one sentence each)
 ## Optional extras · slides 39-41
 **[HOMEWORK]**
 
-The connector questions (read-only config, delete semantics, failure table) moved to [homework.md](homework.md#optional-not-graded-connector-questions-slides-39-41).
+The connector questions (read-only config, delete semantics, failure table) moved to [homework.md](homework.md) (section "Optional").
 
 ---
 
