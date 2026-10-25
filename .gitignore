@@ -1,0 +1,12 @@
+# Lab runtime files (created by the scripts, never commit)
+resume_token.json
+orders.json
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Local Docker volume data (the compose file uses a named volume; this covers bind-mount experiments)
+volumes/
+data/
