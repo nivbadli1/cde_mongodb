@@ -28,7 +28,7 @@ MongoDB is taught as the *source* of a data pipeline: schema drift, BSON types, 
 
 ## Homework
 
-About 75-90 minutes in the same environment: two notebooks with built-in self-checks (HW1 data-quality report, HW2 Silver flatten), a `$jsonSchema` contract in mongosh (HW3) and five short written questions (HW4). See [lab/homework.md](lab/homework.md) for tasks, times and what to hand in.
+About 75-90 minutes in the same environment: two notebooks with built-in self-checks (HW1 data-quality report, HW2 Silver flatten), a `$jsonSchema` contract in mongosh (HW3) and five short written questions (HW4). See [lab/homework.md](lab/homework.md) for tasks and times. Nothing is handed in: you check yourself against the self-checks and the solutions.
 
 ## Quickstart
 

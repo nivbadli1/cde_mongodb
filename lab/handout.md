@@ -292,7 +292,7 @@ Without the index the winning plan is `SORT` over `COLLSCAN`. Equality field (`s
 
 *(2 min catch-up buffer: finish your current task, open Jupyter, ask questions.)*
 
-Open Jupyter at <http://localhost:8888> (password: `<ask the instructor>`). The repo's `lab` folder is mounted at `/home/developer/lab`, so you see it as **lab/** in the file browser.
+Open Jupyter at <http://localhost:8888> (password: `developer` - the local course container only). The repo's `lab` folder is mounted at `/home/developer/lab`, so you see it as **lab/** in the file browser.
 
 ## B1 PyMongo notebook (7 min) · slides 11, 15, 17
 **[SOLO IN CLASS]**
