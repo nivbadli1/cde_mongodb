@@ -19,7 +19,7 @@ Slide numbers refer to the final 44-slide deck ([`MongoDB_Lesson_Deck_Content.md
 | HW2 Silver flatten | HOMEWORK | ~30 | 4, 15, 17, 25 | `HW2_silver_flatten.ipynb`: `orders_flat` (unified email, numeric total, lowercase status, datetime) + `order_items` (int qty); decides on empty orders; self-check |
 | HW3 `$jsonSchema` contract | HOMEWORK | ~20 | 4, 16 | Copy with `$out`, validator in `warn` → find the log line → `error` → rejection; explain `moderate` |
 | HW4 Written questions | HOMEWORK | ~15 | 31, 37, 40, 41, 42 | Oplog window, delete events, tombstones, failure table, checklist |
-| Optional extras | HOMEWORK (not graded) | ~10 | 39, 40, 41 | Reads the connector config, answers delete-semantics and failure-table questions; no Kafka needed |
+| Optional extras | HOMEWORK (optional) | ~10 | 39, 40, 41 | Reads the connector config, answers delete-semantics and failure-table questions; no Kafka needed |
 
 ## Slides not practiced in the lab
 

@@ -79,6 +79,11 @@ use shop
 
 **Reflection:** `rs.printReplicationInfo()` shows the oplog window. What happens to a consumer that is down longer than that window? (slide 31)
 
+<details><summary>Answer</summary>
+
+The oplog is capped: old entries are overwritten. The consumer's resume token then points to an entry that is gone, so it cannot resume (`ChangeStreamHistoryLost` / invalid resume token) and the changes in between are lost. You need a new full snapshot, and you have to accept or backfill the gap (slides 31, 37, 41).
+</details>
+
 ---
 
 # Part A - mongosh
@@ -103,6 +108,11 @@ db.orders.distinct("status")
 ```
 
 **Reflection:** the business expects 5 statuses. Why is `$sample` better than `find().limit()` for spotting problems like this? (slide 22)
+
+<details><summary>Answer</summary>
+
+`find().limit()` returns documents in natural order, which in a real app collection means roughly the oldest ones, while drift usually lives in the newest documents (here, the v2 email shape since June). `$sample` picks random documents from the whole collection, so you see more of the different shapes and spellings.
+</details>
 
 ## A2 Find the data problems (6 min) · slides 4, 11, 15, 26
 **[TOGETHER]** for the first query (missing status), then **[SOLO IN CLASS]** for the rest and the "Your turn".
@@ -147,6 +157,11 @@ Every order has an email - it just lives in one of two places (107 + 93 = 200).
 
 **Reflection:** in a schema-on-write database (slide 4), which of these problems would have been rejected at insert time?
 
+<details><summary>Answer</summary>
+
+Typed columns would have rejected the 19 string totals and the 26 string + 12 epoch-number `created_at` values. `NOT NULL` would have rejected the 7 orders without `status` and the 11 without `total`, and a `CHECK`/enum on status would have rejected the upper/capitalized spellings. Moving the email to `customer.contact.email` would have needed an `ALTER TABLE` first. An empty `items` array is not an error in SQL either: it is just an order with zero item rows.
+</details>
+
 ## A3 CRUD fixes (7 min) · slides 19-21
 **[SOLO IN CLASS]**
 
@@ -187,7 +202,12 @@ db.orders.countDocuments({ "items.2": { $exists: true } })
 If the 3rd element exists, the order has at least 3 items.
 </details>
 
-**Reflection:** how many of the 19 string totals are actually >= 1000? (Answer from slide 19: 7 - so the true count is 82, not 75.)
+**Reflection:** how many of the 19 string totals are actually >= 1000? (slide 19)
+
+<details><summary>Answer</summary>
+
+7. MongoDB never compares a string with a number, so `{ total: { $gte: 1000 } }` silently skips all 19 string totals. Counted after converting, the true number of orders with a total of 1000 or more is 75 + 7 = 82, not 75.
+</details>
 
 ## A4 Aggregations (9 min) · slides 23-26
 **[SOLO IN CLASS]**
@@ -254,6 +274,11 @@ The 22 orders without a `payment` sub-document group under `null`. (`credit_card
 
 **Reflection:** which of these four queries would you turn into an automated data-quality test in your pipeline? (slide 26)
 
+<details><summary>Answer</summary>
+
+The duplicate-key query (4): it should return 0 rows, and today it returns ORD-10010 and ORD-10011. The status count (1) as a test that missing status (`null` 7) stays at an agreed level and no new values appear. Revenue per city and top SKUs are business queries, not tests, although the city list does show unmerged values (`tlv`, `beer sheva`).
+</details>
+
 ## A5 Index and explain (5 min) · slides 27-29
 **[SOLO IN CLASS]**
 
@@ -286,13 +311,18 @@ Without the index the winning plan is `SORT` over `COLLSCAN`. Equality field (`s
 
 **Reflection:** your nightly export filters on a field with no index. Who pays the price? (slide 27)
 
+<details><summary>Answer</summary>
+
+The production app. Without an index the export is a COLLSCAN that reads every document on the same server that serves the app's reads and writes. In A5 that meant reading 200 documents to return 11; on a large collection it competes with the app for CPU, memory and disk.
+</details>
+
 ---
 
 # Part B - Python
 
 *(2 min catch-up buffer: finish your current task, open Jupyter, ask questions.)*
 
-Open Jupyter at <http://localhost:8888> (password: `<ask the instructor>`). The repo's `lab` folder is mounted at `/home/developer/lab`, so you see it as **lab/** in the file browser.
+Open Jupyter at <http://localhost:8888> (password: `developer` - the local course container only). The repo's `lab` folder is mounted at `/home/developer/lab`, so you see it as **lab/** in the file browser.
 
 ## B1 PyMongo notebook (7 min) · slides 11, 15, 17
 **[SOLO IN CLASS]**
@@ -309,6 +339,11 @@ Open `lab/notebooks/B1_pymongo_explore.ipynb` and run all cells top to bottom. E
 | Explode items | 381 item rows, 40 of them from empty orders, 36 string qtys fixed |
 
 **Reflection:** with a plain (inner) explode, how many orders would vanish from the item table? (slide 17)
+
+<details><summary>Answer</summary>
+
+40: the orders with an empty `items` array. A plain `explode` (or `$unwind` without `preserveNullAndEmptyArrays`) drops them silently. `explode_outer` keeps one row for each of them, which is why B1 shows 381 rows (341 items + 40 empty orders).
+</details>
 
 ## B2 Change stream (8 min) · slides 35-38
 **[SOLO IN CLASS]**
@@ -355,6 +390,11 @@ The delete happened while the watcher was down and still arrived: it resumed fro
 > No second terminal? Run `lab/notebooks/B2_change_stream.ipynb` instead: same steps (insert, update, close, delete, resume) in one notebook.
 
 **Reflection:** the delete event shows no `status`. Why, and what does that mean for a Silver table that only receives these events? (slide 36)
+
+<details><summary>Answer</summary>
+
+When the delete event is produced, the document no longer exists, so the event carries only `documentKey._id` and never a `fullDocument` (pre-images are needed for a "before" image). The Silver table must be keyed by `_id` and delete or soft-delete that row. It cannot learn the order's last status from the event, so it has to keep the latest state itself.
+</details>
 
 ---
 

@@ -18,6 +18,7 @@ MongoDB is taught as the *source* of a data pipeline: schema drift, BSON types, 
 | Wrap-up | [handout → Wrap-up](lab/handout.md#wrap-up-4-min--slides-15-40-42) | source-side checklist, what was hard | 15, 40, 42 | class, 4 min | Together |
 | Homework HW1-HW4 | [lab/homework.md](lab/homework.md) | data-quality report, Silver flatten, `$jsonSchema` contract, written questions | 4, 11, 15-17, 25, 26, 31, 37, 40-42 | home, 75-90 min | Homework |
 | Optional extras | [homework.md → Optional](lab/homework.md) | connector config, delete semantics, failure table (read-only) | 39-41 | home | Homework |
+| Solutions | [docs/homework_solutions.md](docs/homework_solutions.md), [lab/notebooks/solutions/](lab/notebooks/solutions/) | HW1-HW4 + optional answers, solved HW1/HW2 notebooks. **Try first, then compare.** | same as homework | after the homework | Self-check |
 | Slide map | [docs/slide_to_lab_map.md](docs/slide_to_lab_map.md) | every lab section → slides | - | instructor | - |
 
 ## How the 60 minutes go
@@ -28,7 +29,7 @@ MongoDB is taught as the *source* of a data pipeline: schema drift, BSON types, 
 
 ## Homework
 
-About 75-90 minutes in the same environment: two notebooks with built-in self-checks (HW1 data-quality report, HW2 Silver flatten), a `$jsonSchema` contract in mongosh (HW3) and five short written questions (HW4). See [lab/homework.md](lab/homework.md) for tasks, times and what to hand in.
+About 75-90 minutes in the same environment: two notebooks with built-in self-checks (HW1 data-quality report, HW2 Silver flatten), a `$jsonSchema` contract in mongosh (HW3) and five short written questions (HW4). See [lab/homework.md](lab/homework.md) for tasks and times. Nothing is handed in: you check yourself against the self-checks and the solutions.
 
 ## Quickstart
 
@@ -93,10 +94,13 @@ lab/
     B2_change_stream.ipynb
     HW1_data_quality_report.ipynb
     HW2_silver_flatten.ipynb
+    solutions/                solved HW1/HW2 notebooks (try first, then compare)
 docs/
   MongoDB_Lesson_Deck_Content.md   lecture deck content (source of truth, 44 slides)
+  homework_solutions.md            homework solutions and model answers (try first, then compare)
   slide_to_lab_map.md              lab section → slides → what students do
-slides/                     lecture PDF (added by the instructor)
+slides/
+  MongoDB_Presentation.pdf  lecture slides (44 pages)
 ```
 
 ## Versions
@@ -111,5 +115,7 @@ slides/                     lecture PDF (added by the instructor)
 
 - Student guide: [lab/handout.md](lab/handout.md)
 - Homework: [lab/homework.md](lab/homework.md)
+- Homework solutions: [docs/homework_solutions.md](docs/homework_solutions.md), [lab/notebooks/solutions/](lab/notebooks/solutions/)
 - Slide map: [docs/slide_to_lab_map.md](docs/slide_to_lab_map.md)
 - Deck content: [docs/MongoDB_Lesson_Deck_Content.md](docs/MongoDB_Lesson_Deck_Content.md)
+- Lecture slides (PDF): [slides/MongoDB_Presentation.pdf](slides/MongoDB_Presentation.pdf)

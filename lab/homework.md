@@ -9,17 +9,18 @@ You work in the same lab environment as in class (`docker compose up -d`, see th
 | HW2 | Silver flatten: `orders_flat` + `order_items` | 4, 15, 17, 25 | [`notebooks/HW2_silver_flatten.ipynb`](notebooks/HW2_silver_flatten.ipynb) | ~30 min |
 | HW3 | A `$jsonSchema` contract, warn → error | 4, 16 | mongosh (below) | ~20 min |
 | HW4 | 5 written questions | 31, 37, 40, 41, 42 | below | ~15 min |
-| Optional | Connector questions (not graded) | 39-41 | below | ~10 min |
+| Optional | Connector questions | 39-41 | below | ~10 min |
 
 Not finished in class? The A4 `$unwind` query (top SKUs) and the A5 "Your turn" index are part of this homework too. Do them in mongosh from the [handout](handout.md) first.
 
-## What to hand in
+## Self-check (no submission)
 
-- The three completed notebooks: **B1** (from class, if you didn't finish it), **HW1**, **HW2**, all with their outputs and all self-checks printing `OK`
-- One short answers file (`.md` or `.txt`) with your **HW3** commands + outputs and your **HW4** answers
-- Deliver via: `<ask the instructor>`
+This homework is self-practice: there is nothing to submit. Check yourself with:
+- the **self-check cells** in HW1 and HW2 (they print `OK` lines or fail an `assert`)
+- the **expected results** in HW3 (the warning in the log, the rejection in error mode)
+- the **solutions**: [`docs/homework_solutions.md`](../docs/homework_solutions.md) (HW1-HW4 and the optional questions) and the solved notebooks in [`notebooks/solutions/`](notebooks/solutions/). Try each exercise first, then compare.
 
-Open Jupyter at <http://localhost:8888> (password: `<ask the instructor>`). The notebooks are in **lab/notebooks/**.
+Open Jupyter at <http://localhost:8888> (password: `developer` - the local course container only). The notebooks are in **lab/notebooks/**.
 
 ---
 
@@ -59,11 +60,13 @@ db.orders_contract.countDocuments({})        // → 200
    ```bash
    docker logs mongo 2>&1 | grep "Document would fail validation"
    ```
-   Copy one log line into your answers file and point out which rule failed.
-5. **Switch to rejecting.** Change the validator to `validationAction: "error"` and insert another bad document. Copy the error message.
+   Look at one log line and point out which rule failed.
+5. **Switch to rejecting.** Change the validator to `validationAction: "error"` and insert another bad document. Read the error message: which rule does it name?
 6. **Explain `moderate`.** In 2-3 sentences: why does `validationLevel: "moderate"` fit an existing messy collection like this one? What would `"strict"` do to an app that updates an old, invalid order?
 
 Clean up when you are done: `db.orders_contract.drop()`.
+
+Solution with real outputs, including the answer to step 6: [`docs/homework_solutions.md`](../docs/homework_solutions.md) (section HW3).
 
 ## HW4 - Written questions (~15 min) · slides 31, 37, 40, 41, 42
 
@@ -75,9 +78,11 @@ Answer each in 2-3 sentences.
 4. **Failure table (slide 41).** The resume token is older than the oplog window. Which row of the failure table is this, what does the connector do, and what do you do?
 5. **Checklist (slide 42).** Which of the 5 source-side checklist items would you apply first in a real project, and why?
 
+Model answers: [`docs/homework_solutions.md`](../docs/homework_solutions.md) (section HW4).
+
 ---
 
-## Optional (not graded): connector questions · slides 39-41
+## Optional: connector questions · slides 39-41
 
 Read-only. No Kafka runs in this lab.
 
@@ -96,5 +101,23 @@ Read-only. No Kafka runs in this lab.
      }
    }
    ```
+
+   <details><summary>Answer</summary>
+
+   `"change.stream.full.document": "updateLookup"` does the same job. The connector keeps its resume token (the bookmark) in Kafka Connect's offsets, instead of a file (slides 37, 39).
+   </details>
+
 2. **Delete semantics (slide 40).** With `publish.full.document.only=true`, what happens to your `CS-1` delete from B2? Which extra setting turns it into a tombstone (key = `_id`, value = `null`)?
+
+   <details><summary>Answer</summary>
+
+   The delete is dropped: there is no document to publish, so it silently vanishes downstream. `publish.full.document.only.tombstone.on.delete=true` publishes a tombstone instead (key = `_id`, value = `null`), and the sink's MERGE deletes the row.
+   </details>
+
 3. **Failures (slide 41).** Which row of the failure table matches what you did with Ctrl+C in B2? Which row would apply if the watcher were stopped for longer than the oplog window you saw in Setup?
+
+   <details><summary>Answer</summary>
+
+   Ctrl+C and restart = "Connect worker restarts": it resumes from the saved token, maybe with a few duplicates (at-least-once). Stopped longer than the oplog window = "Connector down longer than the oplog window": invalid resume token, so the connector stops and you re-snapshot with a new `offset.partition.name` and `startup.mode=copy_existing`.
+   </details>
+
