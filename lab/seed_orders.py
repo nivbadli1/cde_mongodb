@@ -15,7 +15,7 @@ with intentionally MESSY fields (this is the point of the exercise):
   - 2 duplicated order_id values (for data-quality checks)
 
 Usage (MongoDB running as replica set rs0):
-    pip install "pymongo==4.19.0"
+    pip install "pymongo==4.18.3"
     python seed_orders.py                       # inserts into shop.orders
     python seed_orders.py --json-only           # only writes orders.json
 The connection string comes from $MONGO_URI (set inside dev_env), else localhost.
@@ -24,7 +24,7 @@ orders.json is canonical Extended JSON, so this also works:
     mongoimport --uri "mongodb://localhost:27017/?directConnection=true" \
         --db shop --collection orders --jsonArray --file orders.json
 
-Tested with: Python 3.12/3.13, PyMongo 4.19.0, MongoDB 8.0 (also valid for 7.0 / 9.0).
+Tested with: Python 3.12/3.13, PyMongo 4.18+, MongoDB 8.0 (also valid for 7.0 / 9.0).
 The generator is deterministic (seed=42): every student gets the same data,
 so the "expected outputs" in the practice guide match.
 """

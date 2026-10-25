@@ -14,7 +14,7 @@ Instructor source for the live deck (Claude Slides artifact, Naya template). **4
 |---|---|---|
 | MongoDB server | **8.0** (`mongo:8.0` image) | All code also valid on 7.0 and on 9.0 (GA since 29 Sep 2026 [S24]) |
 | mongosh | the one bundled in the `mongo:8.0` image | Run via `docker exec -it mongo mongosh` |
-| PyMongo | **4.19.0** | Latest on PyPI when this deck was written (24 Oct 2026) |
+| PyMongo | **4.18+** (4.18.3 in dev_env, Python 3.10; 4.19.0 needs Python 3.11+) | Latest on PyPI when this deck was written (24 Oct 2026) |
 | Python | 3.10+ | Tested 3.13 |
 | MongoDB Kafka Connector | **3.1.2** (latest GitHub release) | Concept level only in this lesson [S17] |
 
@@ -817,7 +817,7 @@ Sharding is horizontal scaling: one huge collection split by a shard key across 
 
 **On-slide content**
 ```python
-# PyMongo 4.19 — multi-document ACID transaction (requires a REPLICA SET or sharded cluster)
+# PyMongo 4.18+ — multi-document ACID transaction (requires a REPLICA SET or sharded cluster)
 from pymongo import MongoClient
 client = MongoClient("mongodb://localhost:27017/?directConnection=true")
 db = client.shop
@@ -911,7 +911,7 @@ A resume token is a bookmark: save it after you process each event, and after a 
 
 **On-slide content** (code, left 2/3; demo steps right 1/3)
 ```python
-# watch_orders.py — PyMongo 4.19.0, MongoDB 7.0+ replica set (full file in Appendix A)
+# watch_orders.py — PyMongo 4.18+, MongoDB 7.0+ replica set (full file in Appendix A)
 from bson import json_util
 from pymongo import MongoClient
 from pathlib import Path
@@ -1165,7 +1165,7 @@ with intentionally MESSY fields (this is the point of the exercise):
   - 2 duplicated order_id values (for data-quality checks)
 
 Usage (MongoDB running as replica set rs0):
-    pip install "pymongo==4.19.0"
+    pip install "pymongo==4.18.3"
     python seed_orders.py                       # inserts into shop.orders
     python seed_orders.py --json-only           # only writes orders.json
 The connection string comes from $MONGO_URI (set inside dev_env), else localhost.
@@ -1174,7 +1174,7 @@ orders.json is canonical Extended JSON, so this also works:
     mongoimport --uri "mongodb://localhost:27017/?directConnection=true" \
         --db shop --collection orders --jsonArray --file orders.json
 
-Tested with: Python 3.12/3.13, PyMongo 4.19.0, MongoDB 8.0 (also valid for 7.0 / 9.0).
+Tested with: Python 3.12/3.13, PyMongo 4.18+, MongoDB 8.0 (also valid for 7.0 / 9.0).
 The generator is deterministic (seed=42): every student gets the same data,
 so the "expected outputs" in the practice guide match.
 """
@@ -1369,7 +1369,7 @@ connector uses (it stores the token in Kafka Connect offsets).
 
 Requirements:
   - MongoDB 7.0+ running as a replica set (single-node rs0 is fine)
-  - Python 3.10+, PyMongo 4.19.0     ->  pip install "pymongo==4.19.0"
+  - Python 3.10+, PyMongo 4.18+      ->  pip install "pymongo==4.18.3"
 
 Run:
   python watch_orders.py                 # resume from saved token if it exists
@@ -1468,7 +1468,7 @@ Expected outputs below are computed from the seed-42 dataset. Numbers must match
 ```bash
 docker compose up -d
 docker compose ps                        # mongo STATUS must show (healthy)
-# Python runs inside dev_env (MONGO_URI is preset there); on a laptop: pip install "pymongo==4.19.0"
+# Python runs inside dev_env (MONGO_URI is preset there); on a laptop: pip install "pymongo==4.18.3"
 python seed_orders.py                    # → wrote orders.json (200 docs) / inserted 200 docs into shop.orders
 docker exec -it mongo mongosh
 ```

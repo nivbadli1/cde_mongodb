@@ -8,7 +8,7 @@ connector uses (it stores the token in Kafka Connect offsets).
 
 Requirements:
   - MongoDB 7.0+ running as a replica set (single-node rs0 is fine)
-  - Python 3.10+, PyMongo 4.19.0     ->  pip install "pymongo==4.19.0"
+  - Python 3.10+, PyMongo 4.18+      ->  pip install "pymongo==4.18.3"
 
 Run:
   python watch_orders.py                 # resume from saved token if it exists
