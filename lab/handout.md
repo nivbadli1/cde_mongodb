@@ -34,14 +34,23 @@ Always keep `directConnection=true`: the replica set calls itself `mongo:27017`,
 
 **Goal:** a running 1-member replica set (slide 30) with 200 orders in `shop.orders`.
 
-From the repo folder on your laptop:
+From the repo folder on your laptop (same commands as the README quickstart):
 ```bash
 docker compose up -d
-docker compose ps                     # mongo STATUS must show (healthy)
-docker exec dev_env pip install "pymongo==4.18.3"     # one time, see note below
-docker exec -w /home/developer/lab dev_env python3 seed_orders.py
+docker compose ps                                              # mongo STATUS must show (healthy)
+docker exec dev_env bash /home/developer/lab/setup_dev_env.sh  # → pymongo 4.18.3 OK
+docker exec -it dev_env bash
+```
+Inside dev_env:
+```bash
+cd /home/developer/lab
+python3 seed_orders.py
 # → wrote orders.json (200 docs)
 #   inserted 200 docs into shop.orders
+exit
+```
+Back on your laptop:
+```bash
 docker exec -it mongo mongosh
 ```
 ```javascript
@@ -50,8 +59,8 @@ rs.printReplicationInfo()             // slide 31: oplog size + "log length star
 use shop
 ```
 
-> **PyMongo version.** The lecture uses PyMongo 4.19.0, but 4.19.0 needs Python 3.11+ and `dev_env` has Python 3.10, so inside `dev_env` we install **4.18.3** (everything in this lab works the same). On a laptop with Python 3.11+ you can use `pip install "pymongo==4.19.0"`.
-> The install lives inside the container: after `docker compose down` run it again (`docker compose stop`/`start` keeps it).
+> **PyMongo version.** The lab uses PyMongo 4.18+ (4.18.3 in dev_env, Python 3.10; 4.19.0 needs Python 3.11+). `setup_dev_env.sh` installs `pymongo==4.18.3`. On a laptop: `pip install "pymongo==4.18.3"`.
+> The install lives inside the container: **re-run `docker exec dev_env bash /home/developer/lab/setup_dev_env.sh` after every `docker compose down`** (`docker compose stop`/`start` keeps it).
 
 **Reflection:** `rs.printReplicationInfo()` shows the oplog window. What happens to a consumer that is down longer than that window? (slide 31)
 
@@ -209,7 +218,7 @@ Bonus (slide 28): create `{ status: 1, created_at: -1 }` and explain `db.orders.
 
 # Part B - Python
 
-Open Jupyter at <http://localhost:8888> (course password). The repo's `lab` folder is mounted at `/home/developer/lab`, so you see it as **lab/** in the file browser.
+Open Jupyter at <http://localhost:8888> (password: `<ask the instructor>`). The repo's `lab` folder is mounted at `/home/developer/lab`, so you see it as **lab/** in the file browser.
 
 ## B1 PyMongo notebook (7 min) · slides 11, 15, 17
 

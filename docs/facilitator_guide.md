@@ -10,7 +10,7 @@ docker compose up -d
 docker compose ps                                  # mongo: Up (healthy); dev_env: Up
 docker exec mongo mongosh --quiet --eval 'db.version() + " " + rs.status().members[0].stateStr'
 # → 8.0.x PRIMARY
-docker exec dev_env pip install "pymongo==4.18.3"  # dev_env has Python 3.10 -> 4.19.0 will not install
+docker exec dev_env bash /home/developer/lab/setup_dev_env.sh   # → pymongo 4.18.3 OK
 docker exec -w /home/developer/lab dev_env python3 seed_orders.py
 # → wrote orders.json (200 docs) / inserted 200 docs into shop.orders
 ```
@@ -42,7 +42,7 @@ Bring a fallback for slide 38 / B2: a recording of the 4 watcher steps (the deck
 
 - **Jupyter runs as `developer` via `sudo`**, with `/home/developer` as its root. `sudo` drops the container's environment, so `MONGO_URI` is **not** visible to notebook kernels or the Jupyter terminal. The notebooks fall back to `mongodb://mongo:27017/?directConnection=true`; for scripts, use `docker exec -it dev_env bash` (it has `MONGO_URI`) or `export` it in the Jupyter terminal.
 - **`./lab` is mounted at `/home/developer/lab`.** Files the scripts create (`orders.json`, `resume_token.json`) appear in the student's repo folder and are git-ignored. On Linux hosts the folder may be read-only for the `developer` user; `docker exec` runs as root, so the commands in the handout work either way.
-- **PyMongo:** `dev_env` has Python 3.10.7 and no PyMongo. PyMongo 4.19.0 requires Python ≥ 3.11, so the handout installs 4.18.3 (latest 3.10-compatible). The APIs used in the lab are the same. The install needs internet; if class Wi-Fi is bad, pre-install on student machines or bring a wheel (`pip download "pymongo==4.18.3" --python-version 3.10 --platform manylinux2014_x86_64 --only-binary=:all:`).
+- **PyMongo:** the lab uses PyMongo 4.18+ (4.18.3 in dev_env, Python 3.10; 4.19.0 needs Python 3.11+). `dev_env` ships without PyMongo; `lab/setup_dev_env.sh` installs `pymongo==4.18.3` (skips if already installed, retries pip 3 times). `lab/reset.sh` calls it too. It must be re-run after `docker compose down`. The install needs internet; if class Wi-Fi is bad, pre-install on student machines or bring a wheel (`pip download "pymongo==4.18.3" --python-version 3.10 --platform manylinux2014_x86_64 --only-binary=:all:`).
 - **`nayacollege/mongo:1.0`** (inspected before writing this lab): MongoDB **6.0.13**, started as a plain `mongod` (standalone, no `--replSet`), no data inside. Change streams and the oplog do not work on it as-is, which is why this lab uses `mongo:8.0` with `--replSet rs0`.
 - `rs.printReplicationInfo()` shows a different oplog size on every machine (it defaults to ~5% of free disk). Only the idea matters.
 
@@ -73,8 +73,8 @@ If the room is behind at 0:38, skip the A5 bonus and the A4 follow-ups; never sk
 | `ServerSelectionTimeoutError ... localhost:27017` from inside dev_env | Script ran without `MONGO_URI` (Jupyter terminal) and fell back to `localhost` | Use `docker exec -it dev_env bash`, or `export MONGO_URI="mongodb://mongo:27017/?directConnection=true"` |
 | `Bind for 0.0.0.0:27017 failed: port is already allocated` | A local MongoDB or an old `mongo` container uses 27017 | `docker ps` → stop it (`docker stop <name>`), or stop the local service. Last resort: change to `"27018:27017"` and use `localhost:27018` on the laptop |
 | `Conflict. The container name "/mongo" is already in use` | Old container from another course compose | `docker rm -f mongo dev_env`, then `docker compose up -d` |
-| `ModuleNotFoundError: No module named 'pymongo'` (or `'bson'`) | PyMongo not installed in dev_env. It is installed into the container, so `docker compose down` (or anything that recreates `dev_env`) removes it; `stop`/`start` keeps it | `docker exec dev_env pip install "pymongo==4.18.3"` |
-| `ERROR: No matching distribution found for pymongo==4.19.0` in dev_env | Python 3.10 in dev_env; 4.19.0 needs 3.11+ | Install 4.18.3 |
+| `ModuleNotFoundError: No module named 'pymongo'` (or `'bson'`) | PyMongo not installed in dev_env. It is installed into the container, so `docker compose down` (or anything that recreates `dev_env`) removes it; `stop`/`start` keeps it | `docker exec dev_env bash /home/developer/lab/setup_dev_env.sh` |
+| `ERROR: No matching distribution found for pymongo==4.19.0` in dev_env | Python 3.10 in dev_env; 4.19.0 needs 3.11+ | Use `setup_dev_env.sh` (installs 4.18.3) |
 | Counts differ from the handout | DB modified (A3 run twice, test docs left behind) or seeded with another script | `bash lab/reset.sh` |
 | A4.1 shows `""` instead of `null` | Student skipped the A3 status fix and grouped with `$toLower` | Expected, explained in the handout |
 | First explain in A5 shows IXSCAN | Index already created | `db.orders.dropIndex({ "customer.customer_id": 1 })` |
