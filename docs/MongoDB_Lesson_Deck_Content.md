@@ -1040,7 +1040,6 @@ This is the whole lesson as a checklist you can take to any team that says "the 
 - Flexible schema → **drift, mixed types, nested arrays** → you must detect them
 - Oplog → **Change Streams** → **Kafka source connector** → lakehouse
 - **Practice (60 min):** `docker compose up -d` → open `lab/handout.md` → Setup
-  *(update this line if the repo's final lab command differs, e.g. `lab/seed_orders.py` inside dev_env)*
 
 **Speaker notes**
 Three takeaways: MongoDB is where the data is born, not where it's analyzed; its flexibility is the data engineer's main problem to manage; and the oplog-to-Kafka path is how modern platforms get the data out. For the next hour you'll do everything we discussed on a deliberately messy dataset. Your goal: find at least four data problems and see a change stream with your own eyes. Questions before we start?

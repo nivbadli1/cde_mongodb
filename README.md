@@ -18,7 +18,6 @@ MongoDB is taught as the *source* of a data pipeline: schema drift, BSON types, 
 | Wrap-up | [handout → Wrap-up](lab/handout.md#wrap-up-4-min--slides-15-40-42) | source-side checklist, what was hard | 15, 40, 42 | class, 4 min | Together |
 | Homework HW1-HW4 | [lab/homework.md](lab/homework.md) | data-quality report, Silver flatten, `$jsonSchema` contract, written questions | 4, 11, 15-17, 25, 26, 31, 37, 40-42 | home, 75-90 min | Homework |
 | Optional extras | [homework.md → Optional](lab/homework.md) | connector config, delete semantics, failure table (read-only) | 39-41 | home | Homework |
-| Facilitator guide | [docs/facilitator_guide.md](docs/facilitator_guide.md) | pre-class checklist, run sheet, common errors, cut list | - | instructor | - |
 | Slide map | [docs/slide_to_lab_map.md](docs/slide_to_lab_map.md) | every lab section → slides | - | instructor | - |
 
 ## How the 60 minutes go
@@ -57,11 +56,16 @@ Jupyter (notebooks for Part B): <http://localhost:8888>. The `lab/` folder is mo
 
 Start over at any time: `bash lab/reset.sh` (installs PyMongo if missing, drops `shop`, re-seeds, deletes `resume_token.json`).
 
-### Troubleshooting: container name conflict
+## Troubleshooting
 
-If `docker compose up -d` fails with `Conflict. The container name "/dev_env" is already in use` (a leftover from the Kafka lessons):
-stop any Kafka-lesson work first (ports 22022 and 8888 are shared), then run `docker rm -f dev_env` and `docker compose up -d` again.
-This removes the old container only, not files on your laptop.
+| Symptom | Fix |
+|---|---|
+| `docker compose up -d` → `Conflict. The container name "/dev_env" is already in use` (left over from the Kafka lessons) | Stop any Kafka-lesson work first (ports 22022 and 8888 are shared), then `docker rm -f dev_env` and `docker compose up -d` again. This removes the old container only, not files on your laptop. Same for `"/mongo"`. |
+| mongo never becomes `(healthy)`; `rs.status()` → `no replset config has been received` (replica set not initiated) | `docker exec -it mongo mongosh --eval 'rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "mongo:27017" }] })'`, then `rs.status().members[0].stateStr` → `'PRIMARY'` after a few seconds |
+| From your laptop: `ServerSelectionTimeoutError: Could not reach any servers in [('mongo', 27017)]` (`directConnection` missing) | Use `mongodb://localhost:27017/?directConnection=true`. Without it the driver looks for the replica set member `mongo:27017`, a name your laptop cannot resolve. |
+| Inside dev_env: `ServerSelectionTimeoutError ... localhost:27017` | The script ran without `MONGO_URI` (e.g. in the Jupyter terminal). Use `docker exec -it dev_env bash`, or `export MONGO_URI="mongodb://mongo:27017/?directConnection=true"` |
+| `Bind for 0.0.0.0:27017 failed: port is already allocated` (port 27017 in use) | A local MongoDB or an old `mongo` container uses the port: `docker ps`, then `docker stop <name>` (or stop the local MongoDB service), and `docker compose up -d` again |
+| `ModuleNotFoundError: No module named 'pymongo'` | `docker exec dev_env bash /home/developer/lab/setup_dev_env.sh` (needed again after every `docker compose down`) |
 
 ## Connection rules
 
@@ -91,8 +95,6 @@ lab/
     HW2_silver_flatten.ipynb
 docs/
   MongoDB_Lesson_Deck_Content.md   lecture deck content (source of truth, 44 slides)
-  facilitator_guide.md             pre-class checklist, 60-min run sheet, common errors, cut list
-  homework_solutions.md            instructor-only solutions (this repo is public - remove before sharing)
   slide_to_lab_map.md              lab section → slides → what students do
 slides/                     lecture PDF (added by the instructor)
 ```
@@ -109,7 +111,5 @@ slides/                     lecture PDF (added by the instructor)
 
 - Student guide: [lab/handout.md](lab/handout.md)
 - Homework: [lab/homework.md](lab/homework.md)
-- Instructor guide: [docs/facilitator_guide.md](docs/facilitator_guide.md)
 - Slide map: [docs/slide_to_lab_map.md](docs/slide_to_lab_map.md)
-- Homework solutions (instructor): [docs/homework_solutions.md](docs/homework_solutions.md)
 - Deck content: [docs/MongoDB_Lesson_Deck_Content.md](docs/MongoDB_Lesson_Deck_Content.md)
