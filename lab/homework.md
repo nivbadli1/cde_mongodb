@@ -66,6 +66,8 @@ db.orders_contract.countDocuments({})        // → 200
 
 Clean up when you are done: `db.orders_contract.drop()`.
 
+Solution with real outputs, including the answer to step 6: [`docs/homework_solutions.md`](../docs/homework_solutions.md) (section HW3).
+
 ## HW4 - Written questions (~15 min) · slides 31, 37, 40, 41, 42
 
 Answer each in 2-3 sentences.
@@ -75,6 +77,8 @@ Answer each in 2-3 sentences.
 3. **Connector delete settings (slide 40).** What happens to deletes with `publish.full.document.only=true`? Which setting adds tombstones, and what does a tombstone look like (key and value)?
 4. **Failure table (slide 41).** The resume token is older than the oplog window. Which row of the failure table is this, what does the connector do, and what do you do?
 5. **Checklist (slide 42).** Which of the 5 source-side checklist items would you apply first in a real project, and why?
+
+Model answers: [`docs/homework_solutions.md`](../docs/homework_solutions.md) (section HW4).
 
 ---
 
@@ -97,5 +101,23 @@ Read-only. No Kafka runs in this lab.
      }
    }
    ```
+
+   <details><summary>Answer</summary>
+
+   `"change.stream.full.document": "updateLookup"` does the same job. The connector keeps its resume token (the bookmark) in Kafka Connect's offsets, instead of a file (slides 37, 39).
+   </details>
+
 2. **Delete semantics (slide 40).** With `publish.full.document.only=true`, what happens to your `CS-1` delete from B2? Which extra setting turns it into a tombstone (key = `_id`, value = `null`)?
+
+   <details><summary>Answer</summary>
+
+   The delete is dropped: there is no document to publish, so it silently vanishes downstream. `publish.full.document.only.tombstone.on.delete=true` publishes a tombstone instead (key = `_id`, value = `null`), and the sink's MERGE deletes the row.
+   </details>
+
 3. **Failures (slide 41).** Which row of the failure table matches what you did with Ctrl+C in B2? Which row would apply if the watcher were stopped for longer than the oplog window you saw in Setup?
+
+   <details><summary>Answer</summary>
+
+   Ctrl+C and restart = "Connect worker restarts": it resumes from the saved token, maybe with a few duplicates (at-least-once). Stopped longer than the oplog window = "Connector down longer than the oplog window": invalid resume token, so the connector stops and you re-snapshot with a new `offset.partition.name` and `startup.mode=copy_existing`.
+   </details>
+
