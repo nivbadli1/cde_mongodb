@@ -51,6 +51,7 @@ use shop
 ```
 
 > **PyMongo version.** The lecture uses PyMongo 4.19.0, but 4.19.0 needs Python 3.11+ and `dev_env` has Python 3.10, so inside `dev_env` we install **4.18.3** (everything in this lab works the same). On a laptop with Python 3.11+ you can use `pip install "pymongo==4.19.0"`.
+> The install lives inside the container: after `docker compose down` run it again (`docker compose stop`/`start` keeps it).
 
 **Reflection:** `rs.printReplicationInfo()` shows the oplog window. What happens to a consumer that is down longer than that window? (slide 31)
 
