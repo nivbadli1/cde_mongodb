@@ -8,6 +8,9 @@
 # (it uses "docker exec", so the containers must be running: docker compose up -d)
 set -euo pipefail
 
+echo "0/3 Making sure PyMongo is installed in dev_env..."
+docker exec dev_env bash /home/developer/lab/setup_dev_env.sh
+
 echo "1/3 Dropping database 'shop'..."
 docker exec mongo mongosh --quiet --eval 'db.getSiblingDB("shop").dropDatabase()'
 
