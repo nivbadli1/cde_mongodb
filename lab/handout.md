@@ -69,7 +69,7 @@ db.getCollectionNames()                          // → [ 'orders' ]
 db.orders.estimatedDocumentCount()               // → 200  (fast, from metadata)
 db.orders.countDocuments({})                     // → 200  (exact)
 db.orders.findOne()                              // one full document - read its fields
-db.orders.find({ order_id: "ORD-10001" })        // WHERE order_id = 'ORD-10001' → 1 document, 2 items
+db.orders.find({ order_id: "ORD-10001" })        // WHERE order_id = 'ORD-10001' → 1 document, 4 items
 db.orders.aggregate([{ $sample: { size: 2 } }])  // 2 random docs - compare their shapes!
 db.orders.distinct("status")
 // → [ 'CANCELLED','CREATED','Cancelled','DELIVERED','Delivered','PAID','Paid',
