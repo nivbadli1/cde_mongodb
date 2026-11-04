@@ -20,6 +20,7 @@ MongoDB is taught as the *source* of a data pipeline: schema drift, BSON types, 
 | Optional extras | [homework.md → Optional](lab/homework.md) | connector config, delete semantics, failure table (read-only) | 39-41 | home | Homework |
 | Solutions | [docs/homework_solutions.md](docs/homework_solutions.md), [lab/notebooks/solutions/](lab/notebooks/solutions/) | HW1-HW4 + optional answers, solved HW1/HW2 notebooks. **Try first, then compare.** | same as homework | after the homework | Self-check |
 | Slide map | [docs/slide_to_lab_map.md](docs/slide_to_lab_map.md) | every lab section → slides | - | instructor | - |
+| Cheat sheet | [docs/MongoDB_Cheat_Sheet.md](docs/MongoDB_Cheat_Sheet.md) | SQL ↔ MongoDB: CRUD, operators, aggregation stages, useful commands | all | keep open while you work | Reference |
 
 ## How the 60 minutes go
 
@@ -96,6 +97,7 @@ lab/
     HW2_silver_flatten.ipynb
     solutions/                solved HW1/HW2 notebooks (try first, then compare)
 docs/
+  MongoDB_Cheat_Sheet.md           SQL ↔ MongoDB cheat sheet (CRUD, operators, aggregation)
   MongoDB_Lesson_Deck_Content.md   lecture deck content (source of truth, 44 slides)
   homework_solutions.md            homework solutions and model answers (try first, then compare)
   slide_to_lab_map.md              lab section → slides → what students do
@@ -114,6 +116,7 @@ slides/
 ## Links
 
 - Student guide: [lab/handout.md](lab/handout.md)
+- Cheat sheet (SQL ↔ MongoDB): [docs/MongoDB_Cheat_Sheet.md](docs/MongoDB_Cheat_Sheet.md)
 - Homework: [lab/homework.md](lab/homework.md)
 - Homework solutions: [docs/homework_solutions.md](docs/homework_solutions.md), [lab/notebooks/solutions/](lab/notebooks/solutions/)
 - Slide map: [docs/slide_to_lab_map.md](docs/slide_to_lab_map.md)
